@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Asset = require('../models/Asset');
+const Income = require('../models/Income');
+const Liability = require('../models/Liability');
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -118,9 +121,35 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// @desc    Delete user account
+// @route   DELETE /api/users/profile
+// @access  Private
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (user) {
+      // Delete all user's data
+      await Asset.deleteMany({ userId: req.user._id });
+      await Income.deleteMany({ userId: req.user._id });
+      await Liability.deleteMany({ userId: req.user._id });
+      
+      // Delete user account
+      await user.remove();
+      
+      res.json({ message: 'User account and all associated data deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getProfile,
   updateProfile,
+  deleteUser,
 };
