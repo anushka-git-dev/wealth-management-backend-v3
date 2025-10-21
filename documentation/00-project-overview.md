@@ -193,9 +193,14 @@ wealth-management-backend-v3/
 ### Environment Variables
 ```env
 PORT=3001
-MONGODB_URI=mongodb+srv://admin:admin123@cluster0.zxlwopw.mongodb.net/wealth-management-app-db?retryWrites=true&w=majority&appName=Cluster0
-JWT_SECRET=your-super-secret-jwt-key-2025
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database-name?retryWrites=true&w=majority&appName=Cluster0
+JWT_SECRET=your_jwt_secret_key_here
+AWS_ACCESS_KEY_ID=your_access_key_here
+AWS_SECRET_ACCESS_KEY=your_secret_access_key_here
+AWS_REGION=us-east-1
 ```
+
+**Security Note:** Never commit actual credentials to version control. Use placeholders in documentation and store real credentials securely in environment variables.
 
 ### Server Configuration
 - **Port:** 3001 (configurable via environment)
