@@ -1,0 +1,214 @@
+=================================================================
+AWS ELASTIC BEANSTALK - ENVIRONMENT VARIABLES SETUP
+=================================================================
+
+IMPORTANT: Run these commands AFTER the environment is created successfully!
+
+-----------------------------------------------------------------
+STEP 1: Add EB CLI to PATH (if in new terminal session)
+-----------------------------------------------------------------
+$env:Path += ";C:\Users\User\AppData\Roaming\Python\Python310\Scripts"
+
+
+-----------------------------------------------------------------
+STEP 2: Check Environment Status
+-----------------------------------------------------------------
+eb status
+
+Wait until status shows "Ready" and Health shows "Green"
+
+
+-----------------------------------------------------------------
+STEP 3: Set Environment Variables
+-----------------------------------------------------------------
+
+OPTION A: Set variables one by one (RECOMMENDED for clarity)
+-------------------------------------------------------------
+eb setenv MONGODB_URI="your_actual_mongodb_connection_string_here"
+eb setenv JWT_SECRET="your_actual_jwt_secret_key_here"
+eb setenv AWS_ACCESS_KEY_ID="your_actual_aws_access_key_here"
+eb setenv AWS_SECRET_ACCESS_KEY="your_actual_aws_secret_key_here"
+eb setenv AWS_REGION="us-east-1"
+eb setenv NODE_ENV="production"
+eb setenv PORT="8080"
+
+
+OPTION B: Set all variables at once
+-------------------------------------------------------------
+eb setenv MONGODB_URI="your_mongodb_uri" JWT_SECRET="your_jwt_secret" AWS_ACCESS_KEY_ID="your_access_key" AWS_SECRET_ACCESS_KEY="your_secret_key" AWS_REGION="us-east-1" NODE_ENV="production" PORT="8080"
+
+
+-----------------------------------------------------------------
+STEP 4: Verify Environment Variables
+-----------------------------------------------------------------
+eb printenv
+
+
+-----------------------------------------------------------------
+STEP 5: Open Application in Browser
+-----------------------------------------------------------------
+eb open
+
+
+-----------------------------------------------------------------
+STEP 6: Test API Health Check
+-----------------------------------------------------------------
+# The browser should open to your application URL
+# You should see: {"message": "Welcome to Wealth Management API"}
+
+
+-----------------------------------------------------------------
+STEP 7: View Application Logs
+-----------------------------------------------------------------
+eb logs
+
+
+-----------------------------------------------------------------
+STEP 8: Monitor Application Health
+-----------------------------------------------------------------
+eb health --refresh
+
+
+=================================================================
+MONGODB ATLAS CONFIGURATION
+=================================================================
+
+1. Log in to MongoDB Atlas (https://cloud.mongodb.com)
+
+2. Navigate to: Network Access
+
+3. Click: "Add IP Address"
+
+4. Add EB Instance IP or use 0.0.0.0/0 for all IPs (dev only)
+
+5. Click: "Confirm"
+
+6. Test connection from EB:
+   eb ssh
+   curl -I https://cloud.mongodb.com
+
+
+=================================================================
+USEFUL COMMANDS
+=================================================================
+
+# Check environment status
+eb status
+
+# View logs
+eb logs
+
+# View recent events
+eb events
+
+# Deploy code changes (future)
+eb deploy
+
+# Restart application
+eb restart
+
+# View environment health
+eb health
+
+# SSH into instance
+eb ssh
+
+# View AWS console for environment
+eb console
+
+# List all environments
+eb list
+
+
+=================================================================
+TROUBLESHOOTING
+=================================================================
+
+Issue: Environment not ready
+Solution: Wait 5-10 minutes and check status again
+Command: eb status
+
+
+Issue: Application not responding
+Solution: Check logs for errors
+Command: eb logs
+
+
+Issue: MongoDB connection failed
+Solution: 
+1. Verify MONGODB_URI is set correctly
+2. Whitelist EB IP in MongoDB Atlas
+3. Check MongoDB Atlas is running
+
+
+Issue: AWS Bedrock API errors
+Solution:
+1. Verify AWS credentials have Bedrock permissions
+2. Check Claude 3 Sonnet model is enabled
+3. Verify AWS_REGION is set to us-east-1
+
+
+=================================================================
+DEPLOYMENT COMPLETE CHECKLIST
+=================================================================
+
+[ ] Environment status: Ready
+[ ] Environment health: Green
+[ ] All environment variables set
+[ ] MongoDB Atlas IP whitelisted
+[ ] Application accessible via URL
+[ ] Health check endpoint working
+[ ] API endpoints responding correctly
+[ ] Logs showing no errors
+
+
+=================================================================
+ESTIMATED COSTS (with Free Tier)
+=================================================================
+
+t2.micro instance: FREE (750 hours/month)
+Load Balancer: ~$16/month
+Data Transfer: Minimal for development
+Total: ~$16-20/month for production
+
+To reduce costs:
+- Use single instance (no load balancer) for dev
+- Terminate environment when not in use
+
+
+=================================================================
+NEXT STEPS AFTER DEPLOYMENT
+=================================================================
+
+1. Test all API endpoints with Postman or curl
+2. Monitor application logs for any errors
+3. Set up CloudWatch alarms for monitoring
+4. Configure custom domain (optional)
+5. Set up HTTPS with SSL certificate
+6. Configure CI/CD pipeline for automated deployments
+
+
+=================================================================
+EMERGENCY COMMANDS
+=================================================================
+
+# Restart application
+eb restart
+
+# View real-time logs
+eb logs --stream
+
+# SSH into instance to debug
+eb ssh
+
+# Rebuild and redeploy
+eb deploy --staged
+
+# Terminate environment (WARNING: Deletes everything!)
+eb terminate wealth-management-env
+
+
+=================================================================
+END OF ENVIRONMENT SETUP GUIDE
+=================================================================
+

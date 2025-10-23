@@ -7,13 +7,15 @@ This document provides a comprehensive overview of the Wealth Management Backend
 ## Architecture Overview
 
 ### Technology Stack
-- **Runtime:** Node.js
+- **Runtime:** Node.js 20
 - **Framework:** Express.js
 - **Database:** MongoDB (Atlas Cloud)
 - **Authentication:** JWT (JSON Web Tokens)
 - **Password Security:** bcrypt
 - **Environment Management:** dotenv
 - **CORS:** Cross-Origin Resource Sharing support
+- **AI/ML:** AWS Bedrock with Claude 3 Haiku
+- **Cloud Platform:** AWS Elastic Beanstalk (us-east-2)
 
 ### Application Structure
 ```
@@ -29,6 +31,7 @@ wealth-management-backend-v3/
 │   │   ├── assetController.js  # Asset management logic
 │   │   ├── incomeController.js # Income management logic
 │   │   ├── liabilityController.js # Liability management logic
+│   │   ├── recommendationController.js # AI recommendation logic
 │   │   └── index.js           # Controller exports
 │   ├── middleware/
 │   │   ├── auth.js            # Authentication middleware
@@ -41,12 +44,16 @@ wealth-management-backend-v3/
 │   │   ├── Income.js          # Income schema
 │   │   ├── Liability.js       # Liability schema
 │   │   └── index.js           # Model exports
-│   └── routes/
-│       ├── userRoutes.js      # User API routes
-│       ├── assetRoutes.js     # Asset API routes
-│       ├── incomeRoutes.js    # Income API routes
-│       ├── liabilityRoutes.js # Liability API routes
-│       └── index.js           # Route exports
+│   ├── routes/
+│   │   ├── userRoutes.js      # User API routes
+│   │   ├── assetRoutes.js     # Asset API routes
+│   │   ├── incomeRoutes.js    # Income API routes
+│   │   ├── liabilityRoutes.js # Liability API routes
+│   │   ├── recommendationRoutes.js # AI recommendation routes
+│   │   └── index.js           # Route exports
+│   └── services/
+│       ├── dataAggregationService.js # Financial data aggregation
+│       └── recommendationService.js  # AWS Bedrock & Claude 3 Haiku
 └── documentation/              # Comprehensive documentation
 ```
 
@@ -78,7 +85,16 @@ wealth-management-backend-v3/
 - **Category System:** Organize liabilities by type
 - **Amount Management:** Track liability amounts and balances
 
-### 5. Security Features
+### 5. AI Recommendation System
+- **AWS Bedrock Integration:** Powered by Claude 3 Haiku
+- **Financial Analysis:** Analyzes all financial data from database
+- **Smart Recommendations:** 5-7 actionable financial advice points
+- **Cost-Effective:** ~$0.001 per recommendation request
+- **Public API:** No authentication required
+- **Real-Time:** Generates recommendations on-demand
+- **Fallback Mechanism:** Returns generic advice if API fails
+
+### 6. Security Features
 - **JWT Authentication:** Secure token-based authentication
 - **Password Hashing:** bcrypt with salt rounds
 - **Data Isolation:** User-specific data access
@@ -113,6 +129,11 @@ wealth-management-backend-v3/
 - `GET /api/liabilities/:id` - Get single liability (Protected)
 - `PUT /api/liabilities/:id` - Update liability (Protected)
 - `DELETE /api/liabilities/:id` - Delete liability (Protected)
+
+### AI Recommendation Endpoints
+- `GET /api/recommendations` - Get AI-powered financial recommendations (Public)
+- `GET /api/recommendations/test` - Test AWS Bedrock connection (Public)
+- `GET /api/recommendations/health` - System health check (Public)
 
 ## Database Schema
 
@@ -246,31 +267,42 @@ AWS_REGION=us-east-1
 
 ## Deployment Considerations
 
+### Production Deployment
+- **Platform:** AWS Elastic Beanstalk
+- **Region:** us-east-2 (Ohio)
+- **Instance:** t2.micro (Free tier eligible)
+- **Node.js:** Version 20 on Amazon Linux 2023
+- **Environment:** wealth-mgmt-prod
+- **URL:** http://wealth-mgmt-prod.eba-4hbkvm4b.us-east-2.elasticbeanstalk.com
+
 ### Production Requirements
-- **Environment Variables:** Secure secret management
-- **HTTPS:** SSL/TLS encryption
-- **CORS Configuration:** Restrict origins
-- **Logging:** Proper logging service
-- **Monitoring:** Application monitoring
-- **Backup:** Database backup strategy
+- **Environment Variables:** Configured via EB Console/CLI
+- **HTTPS:** Available via AWS Certificate Manager
+- **CORS Configuration:** Configured in server.js
+- **Logging:** CloudWatch Logs integration
+- **Monitoring:** EB health checks and CloudWatch metrics
+- **Backup:** MongoDB Atlas automated backups
 
 ### Scaling Considerations
 - **Horizontal Scaling:** Stateless design supports scaling
 - **Database Scaling:** MongoDB Atlas auto-scaling
-- **Load Balancing:** Compatible with load balancers
+- **Load Balancing:** Can add ALB for multiple instances
 - **Caching:** Can implement Redis caching
 
 ## Documentation Structure
 
 ### Comprehensive Documentation
-1. **01-project-setup.md** - Initial setup and configuration
-2. **02-database-models.md** - Database schema and models
-3. **03-authentication-middleware.md** - Security implementation
-4. **04-api-routes.md** - API endpoint documentation
-5. **05-controllers.md** - Business logic implementation
-6. **06-server-configuration.md** - Server setup and configuration
-7. **07-api-testing-usage.md** - Testing and integration guide
-8. **00-project-overview.md** - This overview document
+1. **00-project-overview.md** - This overview document
+2. **01-project-setup.md** - Initial setup and configuration
+3. **02-database-models.md** - Database schema and models
+4. **03-authentication-middleware.md** - Security implementation
+5. **04-api-routes.md** - API endpoint documentation
+6. **05-controllers.md** - Business logic implementation
+7. **06-server-configuration.md** - Server setup and configuration
+8. **07-api-testing-usage.md** - Testing and integration guide
+9. **08-ai-recommendation-system.md** - AWS Bedrock AI recommendations
+10. **09-security-best-practices.md** - Security guidelines and best practices
+11. **10-aws-elastic-beanstalk-deployment.md** - AWS EB deployment guide
 
 ## Future Enhancements
 

@@ -9,7 +9,7 @@ dotenv.config();
 const { errorHandler, logger } = require('./src/middleware');
 
 // Import routes
-const { userRoutes, assetRoutes, incomeRoutes, liabilityRoutes } = require('./src/routes');
+const { userRoutes, assetRoutes, incomeRoutes, liabilityRoutes, recommendationRoutes } = require('./src/routes');
 
 // Connect to MongoDB
 const connectDB = require('./src/config/db');
@@ -28,6 +28,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/incomes', incomeRoutes);
 app.use('/api/liabilities', liabilityRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 // Welcome route
 app.get('/', (req, res) => {

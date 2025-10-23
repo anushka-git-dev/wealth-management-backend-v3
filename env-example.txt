@@ -1,0 +1,40 @@
+# Wealth Management Backend - Environment Variables
+# Copy this content to a file named .env in the project root
+
+# ============================================
+# MongoDB Configuration
+# ============================================
+MONGODB_URI=mongodb+srv://your-username:your-password@cluster.mongodb.net/wealth-management?retryWrites=true&w=majority
+
+# ============================================
+# JWT Configuration
+# ============================================
+JWT_SECRET=your_super_secret_jwt_key_here_change_this_in_production
+
+# ============================================
+# Server Configuration
+# ============================================
+PORT=3001
+NODE_ENV=development
+
+# ============================================
+# AWS Bedrock Configuration (FOR RECOMMENDATION SYSTEM)
+# ============================================
+# IMPORTANT: Use these exact values for wealth-management-app-user
+AWS_ACCESS_KEY_ID=AKIAXEFUNDCPMRSXED6Z
+AWS_SECRET_ACCESS_KEY=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
+AWS_REGION=us-east-2
+
+# ============================================
+# IMPORTANT NOTES:
+# ============================================
+# 1. Create a file named .env in project root (not .env.template)
+# 2. Copy the above content to .env file
+# 3. Never commit .env file to git (it's in .gitignore)
+# 4. AWS_REGION must be us-east-2 (Ohio) - NOT us-east-1
+# 5. Before the recommendation system works, you MUST:
+#    ✅ Enable Claude 3 Haiku in AWS Bedrock console (us-east-2)
+#    ✅ Add bedrock:InvokeModel permission to IAM user
+#
+# See: FIX_AWS_PERMISSIONS.md for step-by-step AWS setup instructions
+

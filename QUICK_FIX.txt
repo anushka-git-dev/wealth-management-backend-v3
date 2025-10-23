@@ -1,0 +1,175 @@
+╔════════════════════════════════════════════════════════════════════╗
+║                   🔧 QUICK FIX FOR AWS PERMISSION ERROR            ║
+╚════════════════════════════════════════════════════════════════════╝
+
+📛 YOUR ERROR:
+   "User wealth-management-app-user is not authorized to perform: 
+    bedrock:InvokeModel with an explicit deny"
+
+✅ ROOT CAUSES:
+   1. Claude 3 Haiku model NOT enabled in Bedrock console
+   2. IAM user missing bedrock:InvokeModel permission
+   3. Possibly wrong region (must be us-east-2)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 FIX IT IN 10 MINUTES (4 STEPS):
+
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 1: ENABLE CLAUDE 3 HAIKU (⭐ MOST IMPORTANT!)                │
+└────────────────────────────────────────────────────────────────────┘
+
+1. Open: https://console.aws.amazon.com/bedrock/
+
+2. ⚠️  IMPORTANT: Switch region to us-east-2 (Ohio) 
+   (Top-right corner dropdown)
+
+3. Click: "Model access" in left sidebar
+
+4. Click: "Manage model access" button
+
+5. Find the "Anthropic" section
+
+6. ✅ Check the box for "Claude 3 Haiku"
+
+7. Scroll down, click: "Request model access"
+
+8. Click: "Submit"
+
+9. Wait ~10 seconds, refresh page
+
+10. Verify status shows: "Access granted" ✅
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 2: ADD IAM PERMISSION                                         │
+└────────────────────────────────────────────────────────────────────┘
+
+1. Open: https://console.aws.amazon.com/iam/
+
+2. Click: "Users" in left sidebar
+
+3. Find and click: "wealth-management-app-user"
+
+4. Click: "Add permissions" dropdown
+
+5. Select: "Add inline policy"
+
+6. Click: "JSON" tab
+
+7. Delete everything and paste THIS:
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "bedrock:InvokeModel",
+      "Resource": "arn:aws:bedrock:us-east-2::foundation-model/anthropic.claude-3-haiku-*"
+    }
+  ]
+}
+
+8. Click: "Next"
+
+9. Policy name: BedrockAccess
+
+10. Click: "Create policy"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 3: CREATE .ENV FILE                                           │
+└────────────────────────────────────────────────────────────────────┘
+
+1. Create a file named: .env (in project root folder)
+
+2. Copy content from: env-example.txt
+
+3. Paste into .env file
+
+4. Verify these lines exist:
+
+   AWS_ACCESS_KEY_ID=AKIAXEFUNDCPMRSXED6Z
+   AWS_SECRET_ACCESS_KEY=ICmqJePxkQsPobh28icHktoM/1yQuxKJLyBn/nvy
+   AWS_REGION=us-east-2
+
+5. ⚠️  IMPORTANT: AWS_REGION MUST be us-east-2 (NOT us-east-1)
+
+6. Save the file
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 4: RESTART SERVER & TEST                                      │
+└────────────────────────────────────────────────────────────────────┘
+
+1. Stop your server: Press Ctrl+C in terminal
+
+2. Start server again: npm start
+
+3. Open Postman
+
+4. Test this endpoint:
+   GET http://localhost:3001/api/recommendations/test
+
+5. ✅ SUCCESS if you see:
+   {
+     "success": true,
+     "message": "AWS Bedrock connection successful"
+   }
+
+6. ❌ FAILURE if you still see:
+   "not authorized to perform: bedrock:InvokeModel"
+   → Go back and verify Steps 1 & 2
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 CHECKLIST - DID YOU DO EVERYTHING?
+
+   [ ] Enabled Claude 3 Haiku in Bedrock console (us-east-2)
+   [ ] Model status shows "Access granted"
+   [ ] Added inline IAM policy with bedrock:InvokeModel
+   [ ] Policy uses us-east-2 region (not us-east-1)
+   [ ] Created .env file in project root
+   [ ] .env has AWS credentials
+   [ ] .env has AWS_REGION=us-east-2
+   [ ] Restarted the server
+   [ ] Tested /api/recommendations/test endpoint
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 STILL NOT WORKING?
+
+See detailed guide: FIX_AWS_PERMISSIONS.md
+
+Common issues:
+• Model not enabled in us-east-2 region (most common!)
+• Wrong region in .env file (us-east-1 instead of us-east-2)
+• Policy not attached to correct user
+• Forgot to restart server after changes
+• There's a DENY policy blocking access (need AWS admin help)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ AFTER IT WORKS:
+
+Test the recommendation endpoint:
+GET http://localhost:3001/api/recommendations
+
+This will return AI-generated financial recommendations! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION FILES:
+
+1. QUICK_FIX.txt (this file) - Quick reference
+2. FIX_AWS_PERMISSIONS.md - Detailed step-by-step guide
+3. env-example.txt - .env file template
+4. WORKING_ENDPOINTS.md - All API endpoints reference
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Good luck! 🚀
+
